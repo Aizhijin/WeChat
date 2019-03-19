@@ -32,7 +32,6 @@ app.use(async (req, res) => {
             return
 
         }
-
         //提取post中的请求数据
         const xmlData=await new Promise((resolve, reject)=>{
             let xmldata='';
