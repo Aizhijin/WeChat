@@ -25,12 +25,10 @@ module.exports=()=>{
                 res.end('error');
                 return
             }
-
+            //调用方法将用户数据转化为格式良好的js类型数据
             const xmlData=await getUserDataAsync(req);
             const jsData=parseXMLData(xmlData);
             const userData=formatJsData(jsData);
-
-            console.log(userData);
 
             const option={
                 type:'text',
@@ -72,7 +70,8 @@ module.exports=()=>{
                 option.mediaId=userData.MediaId;
                 option.type='image';
             }
-            
+
+            //调用模板函数返回相应类型消息
             const replyMessage=mould(option);
                 
             res.send(replyMessage);

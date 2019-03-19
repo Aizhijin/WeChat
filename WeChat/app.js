@@ -5,7 +5,7 @@ const express = require('express');
 const reply=require('./reply/index');
 const app = express();
 
-
+//中间件处理函数
 app.use(reply());
 
 app.listen(5400, err => {
