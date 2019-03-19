@@ -5,6 +5,8 @@ const sha1 = require('sha1');
 
 const {getUserDataAsync,parseXMLData,formatJsData}=require('../utils/tools');
 
+const mould=require('./mould');
+
 module.exports=()=>{
     return async (req, res) => {
 
@@ -30,19 +32,27 @@ module.exports=()=>{
 
             console.log(userData);
 
-            //实现回复
-            let replyContent='你好！请输入关键词';
-            if (userData.Content==='1'){
-                replyContent='你若安好，便是晴天。'
-            } else if(userData.Content==='2'){
+            const option={
+                type:'text',
+                fromUserName:userData.FromUserName,
+                toUserName:userData.ToUserName,
+                content: '你好！请输入关键词'
+            };
 
-                replyContent='校长说:\n' +
+            //实现回复
+            if (userData.Content==='1'){
+                option.content='你若安好，便是晴天。'
+            }
+            else if(userData.Content==='2'){
+
+                option.content='校长说:\n' +
                     '奋斗真的只是因为\n ' +
                     '好吃的很贵\n ' +
                     '远方很远 \n' +
                     '喜欢的人很优秀'
-            }else if(userData.Content.indexOf('3')!==-1){
-                replyContent='  《你还在我身旁》 \n' +
+            }
+            else if(userData.Content&&userData.Content.indexOf('3')!==-1){
+                option.content='  《你还在我身旁》 \n' +
                     '瀑布的水逆流而上，\n' +
                     '蒲公英种子从远处飘回，\n' +
                     '聚成伞的模样，\n' +
@@ -58,13 +68,13 @@ module.exports=()=>{
                     '帮我把书包背上。\n' +
                     '你还在我身旁。';
             }
-            const replyMessage=`<xml>
-      <ToUserName><![CDATA[${userData.FromUserName}]]></ToUserName>
-      <FromUserName><![CDATA[${userData.ToUserName}]]></FromUserName>
-      <CreateTime>${Date.now()}</CreateTime>
-      <MsgType><![CDATA[text]]></MsgType>
-      <Content><![CDATA[${replyContent}]]></Content>
-    </xml>`;
+            else if(userData.MsgType==='image') {
+                option.mediaId=userData.MediaId;
+                option.type='image';
+            }
+            
+            const replyMessage=mould(option);
+                
             res.send(replyMessage);
 
         }else {

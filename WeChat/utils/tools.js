@@ -10,12 +10,7 @@ module.exports={
             }).on('end',()=>{
                 resolve(xmldata);
             });
-
-
-
-
     })
-
 
 },
     parseXMLData (xmlData){

@@ -1,3 +1,6 @@
+/*
+主模块（启动项）
+*/
 const express = require('express');
 const reply=require('./reply/index');
 const app = express();
