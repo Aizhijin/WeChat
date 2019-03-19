@@ -1,69 +1,35 @@
 const express = require('express');
 const sha1 = require('sha1');
-const {parseString}= require('xml2js');
+const {getUserDataAsync,parseXMLData,formatJsData}=require('./utils/tools');
 const app = express();
 
 app.use(async (req, res) => {
 
-    //解析请求体数据
     const {timestamp, nonce, signature, echostr} = req.query;
     const token = '43326hezhijin';
 
-    //1）将token、timestamp、nonce三个参数进行字典序排序
-    const sortArr = [timestamp, nonce, token].sort();
+    const sha1Arr = sha1([timestamp, nonce, token].sort().join(''));
 
-    //2）将三个参数字符串拼接成一个字符串进行sha1加密
-    const sha1Arr = sha1(sortArr.join(''));
-
-    //3）开发者获得加密后的字符串可与signature对比，标识该请求来源于微信
-
-    if (req.method==="GET"){//检测请求方式为服务器
+    if (req.method==="GET"){
         if (sha1Arr === signature) {
             res.end(echostr);
-            //消息来自服务器
         } else {
             res.end('error');
         }
-    } else if(req.method==="POST"){//检测请求方式为用户的信息
-
-        //过滤掉不是微信服务器发送的消息
+    } else if(req.method==="POST"){
         if (sha1Arr !== signature) {
             res.end('error');
             return
 
         }
-        //提取post中的请求数据
-        const xmlData=await new Promise((resolve, reject)=>{
-            let xmldata='';
-            req.on('data',data=>{
-                xmldata+=data.toString();
-            }).on('end',()=>{
-                resolve(xmldata);
-            });
 
-        });
+        const xmlData=await getUserDataAsync(req);
+        const jsData=parseXMLData(xmlData);
+        const userData=formatJsData(jsData);
 
-        //转变格式为js对象
-        let jsData=null;
-        parseString(xmlData,{trim:true},(err,result)=>{
-            if (!err){
-                jsData=result;
-            } else {
-                jsData={};
-            }
-        });
-        //格式化数据
-        const {xml}=jsData;
-        let userData={};
-
-        //提取属性值的数组中值
-        for(let key in xml){
-            userData[key]=xml[key][0];
-        }
         console.log(userData);
 
         //实现回复
-
         let replyContent='你好！请输入关键词';
         if (userData.Content==='1'){
             replyContent='你若安好，便是晴天。'
@@ -109,7 +75,7 @@ app.use(async (req, res) => {
 
 });
 
-app.listen(5300, err => {
+app.listen(5400, err => {
     if (!err) {
         console.log('服务器启动成功')
     } else {
