@@ -20,7 +20,6 @@ app.use(async (req, res) => {
         if (sha1Arr !== signature) {
             res.end('error');
             return
-
         }
 
         const xmlData=await getUserDataAsync(req);
