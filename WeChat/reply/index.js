@@ -7,13 +7,17 @@ const {getUserDataAsync,parseXMLData,formatJsData}=require('../utils/tools');
 
 const mould=require('./mould');
 
+const response=require('./response');
+
 module.exports=()=>{
     return async (req, res) => {
 
+        //结构赋值，得到请求数据
         const {timestamp, nonce, signature, echostr} = req.query;
         const token = '43326hezhijin';
+        //拼串并用sha1加密
         const sha1Arr = sha1([timestamp, nonce, token].sort().join(''));
-
+        //判断请求方式（是否来自微信服务器）
         if (req.method==="GET"){
             if (sha1Arr === signature) {
                 res.end(echostr);
@@ -25,55 +29,17 @@ module.exports=()=>{
                 res.end('error');
                 return
             }
-            //调用方法将用户数据转化为格式良好的js类型数据
+            //得到用户数据
             const xmlData=await getUserDataAsync(req);
+            //转化为js类型数据
             const jsData=parseXMLData(xmlData);
+            //转化为良好s类型数据
             const userData=formatJsData(jsData);
-
-            const option={
-                type:'text',
-                fromUserName:userData.FromUserName,
-                toUserName:userData.ToUserName,
-                content: '你好！请输入关键词'
-            };
-
             //实现回复
-            if (userData.Content==='1'){
-                option.content='你若安好，便是晴天。'
-            }
-            else if(userData.Content==='2'){
-
-                option.content='校长说:\n' +
-                    '奋斗真的只是因为\n ' +
-                    '好吃的很贵\n ' +
-                    '远方很远 \n' +
-                    '喜欢的人很优秀'
-            }
-            else if(userData.Content&&userData.Content.indexOf('3')!==-1){
-                option.content='  《你还在我身旁》 \n' +
-                    '瀑布的水逆流而上，\n' +
-                    '蒲公英种子从远处飘回，\n' +
-                    '聚成伞的模样，\n' +
-                    '太阳从西边升起，\n' +
-                    '落向东方。\n' +
-                    '子弹退回枪膛，\n' +
-                    '运动员回到起跑线上，\n' +
-                    '我交回录取通知书，\n' +
-                    '忘了十年寒窗。\n' +
-                    '厨房里飘来饭菜的香，\n' +
-                    '你把我的卷子签好名字，\n' +
-                    '关掉电视，\n' +
-                    '帮我把书包背上。\n' +
-                    '你还在我身旁。';
-            }
-            else if(userData.MsgType==='image') {
-                option.mediaId=userData.MediaId;
-                option.type='image';
-            }
-
+            const option=response(userData);
             //调用模板函数返回相应类型消息
             const replyMessage=mould(option);
-                
+            //返回响应
             res.send(replyMessage);
 
         }else {
