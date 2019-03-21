@@ -13,6 +13,7 @@ async function getAccessToken() {
     const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appId}&secret=${appSecret}`;
 
     const result = await rp({method: 'GET', url, json: true});
+    console.log(result);
 
     //提前5分钟请求
     result.expires_in = Date.now() + 7200000 - 300000;
@@ -35,12 +36,12 @@ module.exports=function getFetchAccessToken() {
          返回值如果是promise， 就不处理， 如果不是， 就会包一层promise返回*/
 
       //读取文件中的值
-       readFile('./accessToken',(err,data)=>{
+       readFile('./acess_Token.txt',(err,data)=>{
            if(!err){
                //将数据转换成js对象
               resolve(JSON.parse(data.toString()));
            }else {
-               console.log(err)
+               reject(err)
            }
        })
    })).then(result=>{

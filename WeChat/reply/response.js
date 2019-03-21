@@ -39,34 +39,38 @@ module.exports = (userData) => {
                 '你还在我身旁。';
         }
     }
+
     else if (userData.MsgType === 'image') {
         option.mediaId = userData.MediaId;
         option.type = 'image';
     }
-    else if(userData.MsgType === 'voice'){
+    else if (userData.MsgType === 'voice') {
         console.log(123);
-        option.content=userData.Recognition;
+        option.content = userData.Recognition;
         console.log(userData);
-        console.log(userData.Recognition+'122')
+        console.log(userData.Recognition + '122')
     }
-    else if(userData.MsgType === 'location'){
-        option.content=`地理纬度：${userData.Location_X}\n`+
-                       `地理经度：${userData.Location_Y}\n`+
-                       `地图缩放大小：${userData.Scale}\n`+
-                       `位置信息：${userData.Label}`;
+    else if (userData.MsgType === 'location') {
+        option.content = `地理纬度：${userData.Location_X}\n` +
+            `地理经度：${userData.Location_Y}\n` +
+            `地图缩放大小：${userData.Scale}\n` +
+            `位置信息：${userData.Label}`;
 
     }
-    else if(userData.Event==='subscribe'){
-        option.content='欢迎小主人的关注，这里是Yuri的小书屋 QAQ~~';
-        if (userData.EventKey){
-            option.content='感谢你通过xxx推荐关注Yuri的公众号~~';
+    else if (userData.MsgType === 'event') {
+        if (userData.Event === 'subscribe') {
+            option.content = '欢迎小主人的关注，这里是Yuri的小书屋 QAQ~~';
+            if (userData.EventKey) {
+                option.content = '感谢你通过xxx推荐关注Yuri的公众号~~';
+            }
         }
-    }
-    else if(userData.Event==='unsubscribe'){
-        console.log('小主人，表要走呐~~ 嘤嘤嘤···');
-    }
-    else if(userData.Event==='CLICK'){
-        option.content='小主人你点击了菜单~~'
+        else if (userData.Event === 'unsubscribe') {
+            console.log('小主人，表要走呐~~ 嘤嘤嘤···');
+        }
+
+        else if (userData.Event === 'CLICK') {
+            option.content = '小主人你点击了菜单~~';
+        }
     }
     return option;
 };
