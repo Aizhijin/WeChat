@@ -1,6 +1,7 @@
 /*
 根据用户发送的消息定义响应数据
 */
+const {url} = require('../config/config');
 module.exports = (userData) => {
 
     const option = {
@@ -37,6 +38,9 @@ module.exports = (userData) => {
                 '关掉电视，\n' +
                 '帮我把书包背上。\n' +
                 '你还在我身旁。';
+        }
+        else if (userData.Content && userData.Content === '3') {
+            option.content = `<a href="${url}/search">语音识别</a>`
         }
     }
 

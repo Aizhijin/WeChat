@@ -44,8 +44,4 @@ function getFetchTicket() {
         })
 }
 
-(async () => {
-    const resualt = await getFetchTicket();
-    console.log(resualt)
-})();
 module.exports = getFetchTicket;

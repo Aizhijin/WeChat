@@ -1,16 +1,15 @@
 /*
 接口封装  请求access_token
 */
+const {appId,appsecret}=require('../config/config')
 //发送请求的包
 const rp = require('request-promise-native');
 
 const {writeFileData,readFileData}=require('../utils/tools');
 //async函数的返回值为一个Promise对象
 async function getAccessToken() {
-    const appId = 'wxb498a65a05066a32';
-    const appSecret = 'b43487932948a2dc7c94546e507e0f9b';
 
-    const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appId}&secret=${appSecret}`;
+    const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appId}&secret=${appsecret}`;
 
     const result = await rp({method: 'GET', url, json: true});
     console.log(result);
