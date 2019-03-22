@@ -3,6 +3,7 @@
 */
 const rp = require('request-promise-native');
 const getFetchAccessToken = require('./accessToken');
+const getFetchTicket = require('./ticket');
 const menu = {
     "button": [
         {
@@ -50,7 +51,7 @@ const menu = {
                 {
                     "type": "view",
                     "name": "百度一下",
-                    "url":"http://www.baidu.com/"
+                    "url": "http://www.baidu.com/"
                 }
             ]
         }
@@ -64,8 +65,7 @@ async function createMenu() {
 
     const url = `https://api.weixin.qq.com/cgi-bin/menu/create?access_token=${access_token}`;
     //发送请求
-    return  await rp({method: 'POST', url, json: true, body: menu});
-
+    return await rp({method: 'POST', url, json: true, body: menu});
 
 
 }
@@ -78,7 +78,6 @@ async function deletMenu() {
     //发送请求
 
     return await rp({method: 'GET', url, json: true});
-
 
 
 }

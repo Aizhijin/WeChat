@@ -4,7 +4,7 @@
 //发送请求的包
 const rp = require('request-promise-native');
 
-const {writeFile,readFile}=require('fs');
+const {writeFileData,readFileData}=require('../utils/tools');
 //async函数的返回值为一个Promise对象
 async function getAccessToken() {
     const appId = 'wxb498a65a05066a32';
@@ -18,33 +18,20 @@ async function getAccessToken() {
     //提前5分钟请求
     result.expires_in = Date.now() + 7200000 - 300000;
     //保存下来
-    writeFile('./acess_Token.txt',JSON.stringify(result),(err)=>{
-        if (!err){
-            console.log('文件保存成功!');
-        } else {
-            console.log(err)
-        }
-    });
+    writeFileData('./acess_Token.txt',result);
     return result;
 }
 
 //得到有效的access_token值
 module.exports=function getFetchAccessToken() {
 
-  return new Promise(((resolve, reject) => {
         /* 内部箭头函数的返回值 就是 then / catch函数的返回值
          返回值如果是promise， 就不处理， 如果不是， 就会包一层promise返回*/
 
       //读取文件中的值
-       readFile('./acess_Token.txt',(err,data)=>{
-           if(!err){
-               //将数据转换成js对象
-              resolve(JSON.parse(data.toString()));
-           }else {
-               reject(err)
-           }
-       })
-   })).then(result=>{
+    return readFileData('./acess_Token.txt')
+
+   .then(result=>{
        //判断是否过期
        if (result.expires_in<Date.now()){//过期
          return  getAccessToken();
